@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Todolist</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uuid@3.4.0/dist/umd/uuidv4.min.js"></script>
+  </head>
+  <body class="">
+    <section class="container mx-auto">
+      <div class="todo bg-s rounded-lg shadow-lg p-6 max-w-lg mx-auto my-20">
+        <h2
+          class="text-2xl font-semibold mb-4 text-blue-600 flex items-center">Todolist 
+        </h2>
+        <div
+          class="input-button flex items-center justify-between bg-gray-200 rounded-full px-3 py-2 mb-4"
+        >
+          <input
+            type="text"
+            id="input-box"
+            class="flex-1 px-3 py-2 bg-transparent border-none outline-none"
+            placeholder="What will you do today"
+          />
+          <button
+            onclick="addTask()"
+            class="bg-blue-500 text-white px-4 py-2 rounded-full">
+            Add Task
+          </button>
+        </div>
+        <span class="hidden" id="errorMessage"></span>
+        <ul id="task-list" class="flex flex-col gap-6">
+          <!-- Tasks will be displayed here -->
+        </ul>
+      </div>
+    </section>
+    <script src="script.js"></script>
+  </body>
+</html>
