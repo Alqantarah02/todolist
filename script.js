@@ -93,53 +93,81 @@ function deleteTask(index) {
 
 
 function displayTasks() {
-  taskList.innerHTML = "";
-
-  tasks.forEach((task) => {
-    const taskItem = document.createElement("li");
-    taskItem.className =
-      "list-item flex items-center justify-between border-b border-gray-300 py-2";
-    taskItem.innerHTML = `
-<div class="flex items-center">
-    <input  class="mr-2 form-checkbox" ${
-      task.completed ? "checked" : ""
-    } onclick="toggleTask('${task.uuid}')">
-    <span class="task-text ${
-      task.completed ? "line-through" : ""
-    }">${task.text}</span>
+    taskList.innerHTML = "";
+  
+tasks.forEach((task) => {
+const taskItem = document.createElement("li");
+taskItem.className =
+"list-item flex items-center justify-between border-b border-gray-300 drop-shadow-lg shadow-red py-2";
+taskItem.innerHTML = `
+<div class="flex justify-between cursor-pointer group" >
+<button class = "hidden group-hover:block"  onclick = "toPreview('${task.uuid }')">View Task</button> 
+<div class = "group-hover:hidden">
+  <input type="checkbox" class="mr-2  form-checkbox" ${
+    task.completed ? "checked" : ""
+  } onclick="toggleTask('${task.uuid}')">
+  <span class="task-text ${
+    task.completed ? "line-through" : ""
+  }">${task.text}</span>
+  </div>
+            
+<div class="flex flex-col-reverse items-center gap-2">
     <span>${task.date}</span>
-</div>
-<div class="flex items-center">
-    <button onclick="editTask('${
-      task.uuid
-    }')" class="text-blue-500 mr-2">
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
-    </svg>   
-    </button>
-     <button onclick="deleteTask('${
-       task.uuid
-       }')" class="text-red-500"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-       <path stroke-linecap="round" stroke-linejoin="round" d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-     </svg></button>
-        </div>
-            `;
-    taskList.appendChild(taskItem);
-  });
+  
+    <div class="flex items-center gap-5" >
+        <button onclick="editTask('${
+          task.uuid
+        }')" class="border-0 outline-none px-[15px] py-[6px] bg-[#999999] text-white rounded-[10px] text-[16px] ">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+      </svg>  
+      </button>
+
+        <button onclick="deleteTask('${
+          task.uuid
+        }')"  class="border-0 outline-none px-[15px] py-[6px] bg-[#d30000] text-white rounded-[10px] text-[16px]">
+
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      </button>
+      </div>
+    </div>
+    </div>
+`;
+taskList.appendChild(taskItem);
+});
 }
+  
 
 // Edit task
 function editTask(index) {
-  console.log(index, "index");
   let task = tasks.find((todo) => todo.uuid == index);
-  console.log("task", task);
-  const updatedText = prompt("Edit the task:", task.text);
-  if (updatedText !== null) {
-    tasks.find((todo) => todo.uuid == index).text = updatedText;
-    console.log("done");
-    saveTasks();
-    displayTasks();
-  }
+
+  Swal.fire({
+    title: "Do you want to save the changes?",
+    showDenyButton: true,
+    showCancelButton: true,
+    confirmButtonText: "Save",
+    denyButtonText: `Don't save`,
+    input: "text",
+    inputValue: task.text,
+  }).then((result) => {
+    if (result.isConfirmed) {
+      Swal.fire("Saved!", "", "success");
+      tasks.find((todo) => todo.uuid == index).text = result.value;
+      saveTasks();
+      displayTasks();
+    } else if (result.isDenied) {
+      Swal.fire("Changes are not saved", "", "info");
+    }
+  });
 }
+function toPreview(uuid) {
+  localStorage.setItem("taskUuid", uuid);
+  window.location.href = "./preview-page.html";
+}
+
 // Load tasks when the page loads
 loadTasks();
